@@ -3,18 +3,13 @@
 #define DHT_TYPE DHT22
 
 // Pin layout configuration
-#define LED_PIN 5
-#define KEY_PIN 2
-#define BUZZER_PIN 7
-
-
-#define TEMPERATURE_ALERT 30
+#define LED_PIN 1
+#define KEY_PIN A0
+#define BUZZER_PIN 5
+#define BUTTON_PIN 4
 
 // Interval time(ms) for sending message to IoT Hub
-#define INTERVAL 200
-
-// If don't have a physical DHT sensor, can send simulated data to IoT hub
-#define SIMULATED_DATA true
+#define INTERVAL 1000
 
 // EEPROM address configuration
 #define EEPROM_SIZE 512

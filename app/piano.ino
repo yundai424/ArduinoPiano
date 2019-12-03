@@ -1,21 +1,23 @@
+#include "config.h"
+
 int getKey() {
-  int analogVal = analogRead(KEY_PIN);
+  int analogVal = analogRead(A0);
   int button = 0;
-  if (analogVal > 1000)
+  if (analogVal >= 550)
     button = 0;
-  else if (analogVal < 100)
+  else if (analogVal < 50)
     button = 1;
-  else if (analogVal < 150)
+  else if (analogVal < 132)
     button = 2;
-  else if (analogVal < 250)
+  else if (analogVal < 200)
     button = 3;
-  else if (analogVal < 300)
+  else if (analogVal < 240)
     button = 4;
-  else if (analogVal < 400)
+  else if (analogVal < 320)
     button = 5;
-  else if (analogVal < 450)
+  else if (analogVal < 400)
     button = 6;
-  else if (analogVal < 500)
+  else if (analogVal < 450)
     button = 7;
   else if (analogVal < 550)
     button = 8;

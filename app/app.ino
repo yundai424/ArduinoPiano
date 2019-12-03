@@ -17,10 +17,15 @@ static bool messagePending = false;
 static bool messageSending = true;
 
 static char *connectionString = "HostName=uci-244-group6.azure-devices.net;DeviceId=MyNodeDevice;SharedAccessKey=9/9huZbKBFyC+eML/jHo/214zvdCFryOaFctoEE02IY=";
-static char *ssid = "ArielDai";
-static char *pass = "123daiyun";
+static char *ssid = "VenetoMCS";
+static char *pass = "947Veneto";
 
 static int interval = INTERVAL;
+
+bool recording = false;
+String noteString = "";
+int prevButton = 0;
+unsigned long startTime;
 
 void blinkLED()
 {
@@ -77,19 +82,12 @@ static IOTHUB_CLIENT_LL_HANDLE iotHubClientHandle;
 void setup()
 {
     pinMode(LED_PIN, OUTPUT);
-
     initSerial();
     delay(2000);
     readCredentials();
 
     initWifi();
     initTime();
-    
-    /*
-    * Break changes in version 1.0.34: AzureIoTHub library removed AzureIoTClient class.
-    * So we remove the code below to avoid compile error.
-    */
-    // initIoThubClient();
 
     iotHubClientHandle = IoTHubClient_LL_CreateFromConnectionString(connectionString, MQTT_Protocol);
     if (iotHubClientHandle == NULL)
@@ -106,14 +104,50 @@ void setup()
 static int messageCount = 1;
 void loop()
 {
-    if (!messagePending && messageSending)
-    {
-        char messagePayload[MESSAGE_MAX_LEN];
-        bool temperatureAlert = readMessage(messageCount, messagePayload);
-        sendMessage(iotHubClientHandle, messagePayload, temperatureAlert);
-        messageCount++;
-        delay(interval);
-    }
-    IoTHubClient_LL_DoWork(iotHubClientHandle);
-    delay(10);
+    if (digitalRead(BUTTON_PIN) == 1) {  // update recording state
+        recording = !recording;
+        if (recording) {
+            startTime = millis();
+            Serial.println("Start recording");
+        } else {
+            Serial.println("End recording");
+        }
+        delay(200);
+  }
+    /**
+     * recording state
+     */
+    if (recording) {
+        Serial.println(analogRead(A0));
+        int button = getKey();
+        playTone(button);
+        if (button != prevButton) {
+            prevButton = button;
+            int noteTime = (millis() - startTime) / 10;
+            startTime = millis();
+            noteString = noteString + button + "," + noteTime + "#";
+        }
+    /**
+     * uploading state
+     */
+    } else {
+        if (!messagePending && messageSending) {
+            char messagePayload[MESSAGE_MAX_LEN];
+            String notes = "1,15#2,20#4,15#2,10#";
+            int strLen = notes.length() + 1;
+            char charBuff[strLen];
+            notes.toCharArray(charBuff, strLen);
+            bool temperatureAlert = readMessage(messageCount, messagePayload, charBuff);
+            sendMessage(iotHubClientHandle, messagePayload, temperatureAlert);
+            messageCount++;
+            delay(interval);   // wait for upload finished
+            Serial.println(noteString);
+            delay(10);
+            noteString = "";
+        }
+        prevButton = 0;
+        IoTHubClient_LL_DoWork(iotHubClientHandle);
+        delay(10);
+    
+  }
 }

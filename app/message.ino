@@ -2,46 +2,17 @@
 #include <ArduinoJson.h>
 #include <DHT.h>
 
-#if SIMULATED_DATA
-
-void initSensor()
+bool readMessage(int messageId, char *payload, char *notes)
 {
-    // use SIMULATED_DATA, no sensor need to be inited
-}
-
-float readKey()
-{
-    return random(1,9);
-}
-
-#else
-
-float readKey()
-{
-    return getKey();
-}
-
-#endif
-
-bool readMessage(int messageId, char *payload)
-{
-    float key = readKey();
     StaticJsonBuffer<MESSAGE_MAX_LEN> jsonBuffer;
     JsonObject &root = jsonBuffer.createObject();
     root["deviceId"] = DEVICE_ID;
     root["messageId"] = messageId;
 
     // NAN is not the valid json, change it to NULL
-    if (std::isnan(key))
-    {
-        root["key"] = NULL;
-    }
-    else
-    {
-        root["key"] = key;
-    }
+    root["notes"] = notes;
     root.printTo(payload, MESSAGE_MAX_LEN);
-    return false;
+    return true;
 }
 
 void parseTwinMessage(char *message)
