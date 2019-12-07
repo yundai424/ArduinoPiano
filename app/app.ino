@@ -17,22 +17,17 @@ static bool messagePending = false;
 static bool messageSending = true;
 
 static char *connectionString = "HostName=uci-244-group6.azure-devices.net;DeviceId=MyNodeDevice;SharedAccessKey=9/9huZbKBFyC+eML/jHo/214zvdCFryOaFctoEE02IY=";
-static char *ssid = "VenetoMCS";
-static char *pass = "947Veneto";
+//static char *ssid = "ArielDai";
+//static char *pass = "123daiyun";
+static char *ssid = "3flagCandidates";
+static char *pass = "ILoveLeetcode!";
 
 static int interval = INTERVAL;
 
 bool recording = false;
-String noteString = "";
+String noteString = "0,";
 int prevButton = 0;
 unsigned long startTime;
-
-void blinkLED()
-{
-    digitalWrite(LED_PIN, HIGH);
-    delay(500);
-    digitalWrite(LED_PIN, LOW);
-}
 
 void initWifi()
 {
@@ -60,6 +55,7 @@ void initTime()
 {
     time_t epochTime;
     configTime(0, 0, "pool.ntp.org", "time.nist.gov");
+    delay(1000);
 
     while (true)
     {
@@ -81,7 +77,6 @@ void initTime()
 static IOTHUB_CLIENT_LL_HANDLE iotHubClientHandle;
 void setup()
 {
-    pinMode(LED_PIN, OUTPUT);
     initSerial();
     delay(2000);
     readCredentials();
@@ -99,6 +94,9 @@ void setup()
     IoTHubClient_LL_SetMessageCallback(iotHubClientHandle, receiveMessageCallback, NULL);
     IoTHubClient_LL_SetDeviceMethodCallback(iotHubClientHandle, deviceMethodCallback, NULL);
     IoTHubClient_LL_SetDeviceTwinCallback(iotHubClientHandle, twinCallback, NULL);
+    tone(BUZZER_PIN, NOTE_C4);
+    delay(100);
+    noTone(BUZZER_PIN);
 }
 
 static int messageCount = 1;
@@ -112,7 +110,7 @@ void loop()
         } else {
             Serial.println("End recording");
         }
-        delay(200);
+        delay(500);
   }
     /**
      * recording state
@@ -125,29 +123,32 @@ void loop()
             prevButton = button;
             int noteTime = (millis() - startTime) / 10;
             startTime = millis();
-            noteString = noteString + button + "," + noteTime + "#";
+            if (noteTime > 4) // hardcode a threshold to avoid recording fluctuation due to voltage instability
+                noteString = noteString + noteTime + "#" + button + ",";
         }
     /**
      * uploading state
      */
     } else {
+      if (noteString != "0,") {
         if (!messagePending && messageSending) {
-            char messagePayload[MESSAGE_MAX_LEN];
-            String notes = "1,15#2,20#4,15#2,10#";
-            int strLen = notes.length() + 1;
+            char messagePayload[MESSAGE_MAX_LEN]; 
+            noteString = noteString + "0#";
+            int strLen = noteString.length() + 1;
             char charBuff[strLen];
-            notes.toCharArray(charBuff, strLen);
+            noteString.toCharArray(charBuff, strLen);
+            
             bool temperatureAlert = readMessage(messageCount, messagePayload, charBuff);
             sendMessage(iotHubClientHandle, messagePayload, temperatureAlert);
             messageCount++;
             delay(interval);   // wait for upload finished
             Serial.println(noteString);
             delay(10);
-            noteString = "";
+            noteString = "0,";
         }
         prevButton = 0;
         IoTHubClient_LL_DoWork(iotHubClientHandle);
         delay(10);
-    
+    }
   }
 }

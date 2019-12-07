@@ -9,7 +9,7 @@
 #define BUTTON_PIN 4
 
 // Interval time(ms) for sending message to IoT Hub
-#define INTERVAL 1000
+#define INTERVAL 3000
 
 // EEPROM address configuration
 #define EEPROM_SIZE 512

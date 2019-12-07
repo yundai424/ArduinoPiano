@@ -28,12 +28,12 @@ int getKey() {
 
 void playTone(int button) {
   if (button == 0) noTone(BUZZER_PIN);
-  if (button == 1) tone(BUZZER_PIN, NOTE_C4);
-  if (button == 2) tone(BUZZER_PIN, NOTE_D4);
-  if (button == 3) tone(BUZZER_PIN, NOTE_E4);
-  if (button == 4) tone(BUZZER_PIN, NOTE_F4);
-  if (button == 5) tone(BUZZER_PIN, NOTE_G4);
-  if (button == 6) tone(BUZZER_PIN, NOTE_A4);
-  if (button == 7) tone(BUZZER_PIN, NOTE_B4);
-  if (button == 8) tone(BUZZER_PIN, NOTE_C5);
+  if (button == 1) tone(BUZZER_PIN, NOTE_C6);
+  if (button == 2) tone(BUZZER_PIN, NOTE_D6);
+  if (button == 3) tone(BUZZER_PIN, NOTE_E6);
+  if (button == 4) tone(BUZZER_PIN, NOTE_F6);
+  if (button == 5) tone(BUZZER_PIN, NOTE_G6);
+  if (button == 6) tone(BUZZER_PIN, NOTE_A6);
+  if (button == 7) tone(BUZZER_PIN, NOTE_B6);
+  if (button == 8) tone(BUZZER_PIN, NOTE_C7);
 }

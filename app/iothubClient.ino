@@ -33,7 +33,6 @@ static void sendCallback(IOTHUB_CLIENT_CONFIRMATION_RESULT result, void *userCon
     if (IOTHUB_CLIENT_CONFIRMATION_OK == result)
     {
         Serial.println("Message sent to Azure IoT Hub.");
-        blinkLED();
     }
     else
     {
@@ -104,7 +103,6 @@ IOTHUBMESSAGE_DISPOSITION_RESULT receiveMessageCallback(IOTHUB_MESSAGE_HANDLE me
         temp[size] = '\0';
         Serial.printf("Receive C2D message: %s.\r\n", temp);
         free(temp);
-        blinkLED();
     }
     return IOTHUBMESSAGE_ACCEPTED;
 }
