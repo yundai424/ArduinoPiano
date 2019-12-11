@@ -19,8 +19,6 @@ static bool messageSending = true;
 static char *connectionString = "HostName=uci-244-group6.azure-devices.net;DeviceId=MyNodeDevice;SharedAccessKey=9/9huZbKBFyC+eML/jHo/214zvdCFryOaFctoEE02IY=";
 //static char *ssid = "ArielDai";
 //static char *pass = "123daiyun";
-//static char *ssid = "3flagCandidates";
-//static char *pass = "ILoveLeetcode!";
 static char *ssid = "VenetoMCS";
 static char *pass = "947Veneto";
 
@@ -118,17 +116,12 @@ void loop()
      * recording state
      */
     if (recording) {
-//        Serial.println(analogRead(A0));
         int button = getKey();
         int noteTime = (millis() - startTime) / 10;
-//        Serial.println(button);
         playTone(button);
-//        tone(BUZZER_PIN, NOTE_C6);
-        if (button != prevButton && noteTime > 5) {
+        if (button != prevButton && noteTime > 5) { // hardcode a threshold to avoid recording fluctuation due to voltage instability
             prevButton = button;
-//            int noteTime = (millis() - startTime) / 10;
             startTime = millis();
-//            if (noteTime > 4) // hardcode a threshold to avoid recording fluctuation due to voltage instability
                 noteString = noteString + noteTime + "#" + button + ",";
         }
         delay(50);
