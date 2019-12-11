@@ -7,7 +7,7 @@ int getKey() {
     button = 0;
   else if (analogVal < 50)
     button = 1;
-  else if (analogVal < 132)
+  else if (analogVal < 125)
     button = 2;
   else if (analogVal < 200)
     button = 3;

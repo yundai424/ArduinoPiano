@@ -19,8 +19,10 @@ static bool messageSending = true;
 static char *connectionString = "HostName=uci-244-group6.azure-devices.net;DeviceId=MyNodeDevice;SharedAccessKey=9/9huZbKBFyC+eML/jHo/214zvdCFryOaFctoEE02IY=";
 //static char *ssid = "ArielDai";
 //static char *pass = "123daiyun";
-static char *ssid = "3flagCandidates";
-static char *pass = "ILoveLeetcode!";
+//static char *ssid = "3flagCandidates";
+//static char *pass = "ILoveLeetcode!";
+static char *ssid = "VenetoMCS";
+static char *pass = "947Veneto";
 
 static int interval = INTERVAL;
 
@@ -79,7 +81,7 @@ void setup()
 {
     initSerial();
     delay(2000);
-    readCredentials();
+//    readCredentials();
 
     initWifi();
     initTime();
@@ -94,7 +96,7 @@ void setup()
     IoTHubClient_LL_SetMessageCallback(iotHubClientHandle, receiveMessageCallback, NULL);
     IoTHubClient_LL_SetDeviceMethodCallback(iotHubClientHandle, deviceMethodCallback, NULL);
     IoTHubClient_LL_SetDeviceTwinCallback(iotHubClientHandle, twinCallback, NULL);
-    tone(BUZZER_PIN, NOTE_C4);
+    tone(BUZZER_PIN, NOTE_C6);
     delay(100);
     noTone(BUZZER_PIN);
 }
@@ -111,25 +113,30 @@ void loop()
             Serial.println("End recording");
         }
         delay(500);
-  }
+    }
     /**
      * recording state
      */
     if (recording) {
-        Serial.println(analogRead(A0));
+//        Serial.println(analogRead(A0));
         int button = getKey();
+        int noteTime = (millis() - startTime) / 10;
+//        Serial.println(button);
         playTone(button);
-        if (button != prevButton) {
+//        tone(BUZZER_PIN, NOTE_C6);
+        if (button != prevButton && noteTime > 5) {
             prevButton = button;
-            int noteTime = (millis() - startTime) / 10;
+//            int noteTime = (millis() - startTime) / 10;
             startTime = millis();
-            if (noteTime > 4) // hardcode a threshold to avoid recording fluctuation due to voltage instability
+//            if (noteTime > 4) // hardcode a threshold to avoid recording fluctuation due to voltage instability
                 noteString = noteString + noteTime + "#" + button + ",";
         }
+        delay(50);
     /**
      * uploading state
      */
     } else {
+      noTone(BUZZER_PIN);
       if (noteString != "0,") {
         if (!messagePending && messageSending) {
             char messagePayload[MESSAGE_MAX_LEN]; 
